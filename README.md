@@ -45,8 +45,9 @@ project-root/
 └── 2540/
     └── Problem_2540.txt        # Last problem description
 Each folder 1/, 2/, …, 2540/ contains exactly one .txt file holding the full problem description.
-
-#Python Script (db.py)
+---
+##
+Python Script (db.py)
 ```
 import os
 import sqlite3
