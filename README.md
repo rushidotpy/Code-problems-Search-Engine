@@ -81,7 +81,8 @@ Rows in problems: 2540
 
 
 Python Script (db.py)
-```import os
+```
+import os
 import sqlite3
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -116,17 +117,13 @@ insert_sql = "INSERT INTO problems (title, url, description) VALUES (?, ?, ?)"
 # Walk through data directories (1 → 2540)
 for n in range(1, 2541):
     folder = os.path.join(qdata_dir, str(n))
-
     # Expect exactly one text file
     files = [name for name in os.listdir(folder) if name.endswith(".txt")]
     if len(files) != 1:
         raise RuntimeError(f"Expected 1 text file in {folder}, found {files}")
-
     txt_path = os.path.join(folder, files[0])
-
     with open(txt_path, encoding="utf-8") as f:
         desc = f.read()
-
     idx = n - 1
     cur.execute(insert_sql, (titles[idx], links[idx], desc))
 
