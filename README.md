@@ -45,10 +45,9 @@ project-root/
 └── 2540/
     └── Problem_2540.txt        # Last problem description
 Each folder 1/, 2/, …, 2540/ contains exactly one .txt file holding the full problem description.
----
-##
-Python Script (db.py)
-```
+## 📜 Python Script (`db.py`)
+
+```python
 import os
 import sqlite3
 
@@ -59,7 +58,7 @@ q_index_path = os.path.join(BASE_DIR, "Qdata", "Qindex.txt")
 qdata_dir    = os.path.join(BASE_DIR, "Qdata")
 
 # Create / connect to DB
-conn = sqlite3.connect(os.path.join(BASE_DIR, "problemhunt.db"))
+conn = sqlite3.connect(os.path.join(BASE_DIR, "problems.db"))
 cur = conn.cursor()
 
 cur.execute("""
