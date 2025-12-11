@@ -7,7 +7,7 @@ I scraped **~2540 LeetCode problems**, including their titles, URLs, and full de
 
 ## 🚀 Features
 
-- Local SQLite database (`problemhunt.db`)
+- Local SQLite database (`problems.db`)
 - 2540+ LeetCode problem statements
 - Cleanly indexed titles and URLs
 - Ready for NLP tasks like:
@@ -25,7 +25,7 @@ I scraped **~2540 LeetCode problems**, including their titles, URLs, and full de
 ```text
 project-root/
 │
-├── problemhunt.db              # Generated SQLite database
+├── problems.db              # Generated SQLite database
 │
 ├── db.py                       # Python script to populate the database
 │
@@ -45,6 +45,8 @@ project-root/
 └── 2540/
     └── Problem_2540.txt        # Last problem description
 Each folder 1/, 2/, …, 2540/ contains exactly one .txt file holding the full problem description.
+
+All these code problems are stored in a SQLite database with this Python script.
 ## 📜 Python Script (`db.py`)
 
 ```python
