@@ -20,9 +20,9 @@ I scraped **~2540 LeetCode problems**, including their titles, URLs, and full de
 
 ---
 
-## 📁 Folder Structure
+📁 Folder Structure
 
-```text
+````text
 project-root/
 │
 ├── problems.db              # Generated SQLite database
@@ -44,12 +44,12 @@ project-root/
 │
 └── 2540/
     └── Problem_2540.txt        # Last problem description
+````
 Each folder 1/, 2/, …, 2540/ contains exactly one .txt file holding the full problem description.
 
 All these code problems are stored in a SQLite database with this Python script.
 ## 📜 Python Script (`db.py`)
-
-```python
+````
 import os
 import sqlite3
 
@@ -106,3 +106,4 @@ print("Rows in problems:", cur.fetchone()[0])
 conn.commit()
 cur.close()
 conn.close()
+````
