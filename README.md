@@ -2,7 +2,60 @@
 
 Link: https://code-problems-search-engine-lssgm2c4mtvhz2syyjaptd.streamlit.app/
 
+
+While using LeetCode, searching for the “right” problem by tags or concepts felt slow and clunky, so this project builds a simple code problem search engine over scraped LeetCode problems using Python and SQLite. 
+
+---
+
+## Features
+
+- Scrapes ~2,540 LeetCode problem statements (titles, links, descriptions). 
+- Stores all problems in a normalized SQLite database (`problemhunt.db`) for easy querying. 
+- Provides a Python script to ingest raw text files into the `problems` table.  
+
+---
+
+## Data layout on disk
+
+On the local machine the dataset is organized as:
+
+---
+
+## 📁 Folder Structure
+
+```text
+project-root/
+│
+├── problems.db              # Generated SQLite database
+│
+├── db.py                    # Python script to populate the database
+│
+├── Qdata/
+│   ├── index.txt            # All problem titles (one per line)
+│   ├── Qindex.txt           # All problem URLs (one per line)
+│   │
+│   ├── 1/
+│   │   └── Problem_1.txt    # Full problem description
+│   ├── 2/
+│   │   └── Problem_2.txt
+│   ├── 3/
+│   │   └── Problem_3.txt
+│   │
+│   └── ...                  # Continues up to folder 2540
+│
+└── 2540/
+    └── Problem_2540.txt     # Last problem description
+```
+Each folder 1/, 2/, …, 2540/ contains exactly one .txt file holding the full problem description.
+
+Loading the problems into the database
+---
+To turn scraped LeetCode problems into a simple search engine.​
+
+I wrote db.py to read raw scraped data from Qdata (titles in index.txt, URLs in Qindex.txt, and 2,540 description files in numbered folders) and load everything into a SQLite database problemhunt.db with a problems table (id, title, url, description, created_at).​
+
 db.py
+---
 ```
 import os
 import sqlite3
@@ -48,11 +101,9 @@ for i in range(1, 2541):  # 1 to 2540 inclusive
         raise RuntimeError(f"No .txt file found in {folder}")
     if len(txt_files) > 1:
         raise RuntimeError(f"Multiple .txt files in {folder}: {txt_files}")
-
     file_path = os.path.join(folder, txt_files[0])
     with open(file_path, encoding="utf-8") as f:
         desc = f.read()
-
     idx = i - 1  # 0-based index for lists
     cur.execute(insert_sql, (titles[idx], links[idx], desc))
     
@@ -61,13 +112,14 @@ print("Rows in problems:", cur.fetchone()[0])
 conn.commit()
 cur.close()
 conn.close()
-
-
-
-
 ```
+Turned text into TF‑IDF vectors
+---
+Implemented build_index.py to pull all problem descriptions from SQLite, use scikit‑learn’s TfidfVectorizer to build a TF‑IDF matrix, and save the fitted vectorizer, sparse matrix, and a metadata.csv (id, title, url) for later use.​
 
 Build_index.py
+---
+
 ```
 import sqlite3
 
@@ -97,9 +149,14 @@ with open("tfidf_vectorizer.pkl", "wb") as f:
 sparse.save_npz("tfidf_matrix.npz", tfidf_matrix)
 df[["id", "title", "url"]].to_csv("metadata.csv", index=False)
 ```
+Search with the Streamlit app 
+---
+Developed app.py as a Streamlit app that loads these saved TF‑IDF artifacts when it starts, it turns user queries into vectors, computes cosine similarity against all problems, and shows the top-matching problem titles and links.
 
 app.py
-```
+---
+
+````
 import pickle
 
 import numpy as np
@@ -127,10 +184,8 @@ if query:
     q_vec = vectorizer.transform([query])
     sims = cosine_similarity(q_vec, tfidf_matrix)[0]
     top_idx = np.argsort(sims)[::-1][:top_k]
-
     results = meta.iloc[top_idx].copy()
     results["score"] = sims[top_idx]
-
     for _, row in results.iterrows():
         st.link_button(row["title"], row["url"])
 ```
