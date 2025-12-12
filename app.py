@@ -30,4 +30,4 @@ if query:
     results["score"] = sims[top_idx]
 
     for _, row in results.iterrows():
-        st.write(f"[{row['title']}]({row['url']}")
+        st.link_button(row["title"], row["url"])
